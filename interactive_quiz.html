@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Adventure Quiz!</title>
+    <!-- Google Fonts para uma tipografia moderna e acolhedora -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones incríveis -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fdf8f5',
+                            100: '#fbeee6',
+                            200: '#f6d9cb',
+                            300: '#efa781',
+                            400: '#e57a44',
+                            500: '#dd5b1b',
+                            600: '#bd410e',
+                            700: '#9b2e0a',
+                        },
+                        adventure: {
+                            sky: '#e0f2fe',
+                            ocean: '#0284c7',
+                            sand: '#fef3c7',
+                            amber: '#d97706',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Efeito suave de transição */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar para passagens longas */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-brand-50 via-amber-50 to-brand-100 min-h-screen font-sans text-slate-800 flex flex-col justify-between">
+
+    <!-- Cabeçalho Principal (Visível durante o jogo) -->
+    <header class="w-full max-w-2xl mx-auto px-4 pt-6 flex justify-between items-center z-10">
+        <div class="flex items-center gap-2">
+            <span class="bg-brand-500 text-white w-10 h-10 rounded-2xl flex items-center justify-center shadow-md shadow-brand-500/30">
+                <i class="fa-solid fa-compass text-lg animate-spin-slow"></i>
+            </span>
+            <div>
+                <h1 class="font-display text-xl text-slate-900 tracking-wide">English Quest</h1>
+                <p class="text-xs text-slate-500 font-medium">Sua jornada de aprendizado</p>
+            </div>
+        </div>
+        <div id="header-badge" class="hidden bg-white/80 backdrop-blur px-3.5 py-1.5 rounded-full border border-slate-100 shadow-sm flex items-center gap-2">
+            <span id="player-avatar-icon" class="text-lg">🤠</span>
+            <span id="player-name-display" class="font-bold text-sm text-slate-700">Explorador</span>
+        </div>
+    </header>
+
+    <!-- Área do Conteúdo Principal -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl bg-white rounded-3xl shadow-xl shadow-brand-500/5 border border-slate-100 p-6 md:p-8 relative overflow-hidden">
+            
+            <!-- Elementos de Fundo Decorativos -->
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-brand-200/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-adventure-sky/40 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- TELA 1: Boas-vindas & Nome -->
+            <div id="screen-welcome" class="space-y-6 text-center py-4">
+                <div class="space-y-2">
+                    <span class="inline-block bg-brand-100 text-brand-600 font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-wider">
+                        Desafio Interativo 🚀
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-display text-slate-900">Pronto para a sua maior jornada de Inglês?</h2>
+                    <p class="text-slate-500 max-w-md mx-auto text-sm md:text-base">
+                        Responda às perguntas sobre o Velho Oeste, Piratas e Criaturas do Mar para se tornar um mestre do idioma!
+                    </p>
+                </div>
+
+                <!-- Escolha de Avatar -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-bold text-slate-700">Escolha o seu Personagem de Aventura:</label>
+                    <div class="grid grid-cols-4 gap-3 max-w-xs mx-auto">
+                        <button type="button" onclick="selectAvatar('🤠', 'Cowboy')" class="avatar-btn p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:border-brand-300 transition-all text-3xl focus:outline-none focus:border-brand-500 focus:bg-brand-50/50">🤠</button>
+                        <button type="button" onclick="selectAvatar('🏴‍☠️', 'Pirata')" class="avatar-btn p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:border-brand-300 transition-all text-3xl focus:outline-none focus:border-brand-500 focus:bg-brand-50/50">🏴‍☠️</button>
+                        <button type="button" onclick="selectAvatar('🎒', 'Aventureira')" class="avatar-btn p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:border-brand-300 transition-all text-3xl focus:outline-none focus:border-brand-500 focus:bg-brand-50/50">🎒</button>
+                        <button type="button" onclick="selectAvatar('🧜‍♀️', 'Sereia')" class="avatar-btn p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:border-brand-300 transition-all text-3xl focus:outline-none focus:border-brand-500 focus:bg-brand-50/50">🧜‍♀️</button>
+                    </div>
+                </div>
+
+                <div class="space-y-3 max-w-sm mx-auto pt-2">
+                    <label for="player-name" class="block text-sm font-bold text-slate-700">Digite seu primeiro nome:</label>
+                    <input type="text" id="player-name" placeholder="Ex: Arthur, Júlia..." 
+                           class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white font-medium text-slate-700 text-center transition-all">
+                </div>
+
+                <button onclick="startQuiz()" class="w-full max-w-xs bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-500/20 transition-all transform active:scale-95 text-lg">
+                    Começar Missão <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- TELA 2: Tela do Quiz -->
+            <div id="screen-quiz" class="hidden space-y-6">
+                <!-- Barra de Progresso e Indicadores -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                        <span id="quiz-round-tag" class="bg-brand-100 text-brand-700 px-3 py-1 rounded-full text-[10px] uppercase">RODADA 1: VELHO OESTE</span>
+                        <span id="quiz-progress-text">QUESTÃO 1 DE 40</span>
+                    </div>
+                    <!-- Barra de progresso real -->
+                    <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-brand-400 to-brand-500 transition-all duration-300" style="width: 2.5%"></div>
+                    </div>
+                </div>
+
+                <!-- Card de Texto de Apoio (Passagem) -->
+                <div id="passage-container" class="bg-amber-50/70 border border-amber-200/60 rounded-2xl p-4 space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+                    <div class="flex items-center gap-2 text-adventure-amber">
+                        <i class="fa-solid fa-book-open text-sm"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider">Texto de Apoio (Leia com atenção)</span>
+                    </div>
+                    <p id="passage-text" class="text-sm md:text-base leading-relaxed text-slate-700 italic font-medium"></p>
+                </div>
+
+                <!-- Pergunta -->
+                <div class="space-y-4">
+                    <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-900 leading-snug"></h3>
+                    
+                    <!-- Alternativas -->
+                    <div id="options-container" class="space-y-2.5">
+                        <!-- Gerado dinamicamente via JS -->
+                    </div>
+                </div>
+
+                <!-- Card de Explicação/Gabarito (Inicialmente oculto) -->
+                <div id="explanation-container" class="hidden bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 animate-fade-in">
+                    <div class="flex items-center gap-2">
+                        <span id="feedback-icon" class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"></span>
+                        <h4 id="feedback-title" class="font-display text-lg"></h4>
+                    </div>
+                    <p id="explanation-text" class="text-sm leading-relaxed text-slate-600"></p>
+                    <button onclick="nextQuestion()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md">
+                        <span>Próxima Pergunta</span> <i class="fa-solid fa-circle-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TELA 3: Tela Final de Resultados -->
+            <div id="screen-result" class="hidden text-center space-y-6 py-4">
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-display text-slate-900">Jornada Completa! 🎉</h2>
+                    <p class="text-slate-500 text-sm">Veja como você se saiu na sua grande jornada de inglês:</p>
+                </div>
+
+                <!-- Círculo de Pontuação -->
+                <div class="relative w-44 h-44 mx-auto flex items-center justify-center bg-slate-50 rounded-full border-4 border-slate-100 shadow-inner">
+                    <svg class="absolute transform -rotate-90 w-44 h-44" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="44" stroke="#f1f5f9" stroke-width="6" fill="transparent"/>
+                        <circle id="result-svg-progress" cx="50" cy="50" r="44" stroke="#dd5b1b" stroke-width="8" fill="transparent"
+                                stroke-dasharray="276.46" stroke-dashoffset="276.46" stroke-linecap="round" class="transition-all duration-1000"/>
+                    </svg>
+                    <div class="text-center z-10">
+                        <span id="result-percentage" class="block text-4xl font-display font-extrabold text-brand-600">0%</span>
+                        <span id="result-score-text" class="text-xs font-bold text-slate-400">0 DE 40 ACERTOS</span>
+                    </div>
+                </div>
+
+                <!-- Badge de Desempenho -->
+                <div class="bg-brand-50/80 border border-brand-100 max-w-sm mx-auto p-4 rounded-2xl">
+                    <p class="text-xs uppercase tracking-wider font-bold text-brand-500">Seu Título de Aventureiro:</p>
+                    <h3 id="result-badge-title" class="font-display text-xl text-slate-800 mt-1">Xerife do Inglês 🤠</h3>
+                    <p id="result-motivational-text" class="text-xs text-slate-500 mt-1"></p>
+                </div>
+
+                <!-- Detalhes de Acertos/Erros -->
+                <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto">
+                    <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl">
+                        <span class="block text-2xl font-bold text-emerald-600" id="result-correct-count">0</span>
+                        <span class="text-xs font-semibold text-emerald-700 uppercase">Acertos</span>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-100 p-3 rounded-xl">
+                        <span class="block text-2xl font-bold text-rose-600" id="result-wrong-count">0</span>
+                        <span class="text-xs font-semibold text-rose-700 uppercase">Erros</span>
+                    </div>
+                </div>
+
+                <!-- Botão de Compartilhar com Pais via WhatsApp -->
+                <div class="space-y-3 pt-4">
+                    <p class="text-xs text-slate-500 max-w-xs mx-auto">Clique abaixo para mandar seu resultado completo no WhatsApp de quem te enviou o desafio!</p>
+                    <button onclick="shareResults()" class="w-full max-w-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 text-lg active:scale-95">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> Enviar Resultado no WhatsApp
+                    </button>
+                    <button onclick="restartQuiz()" class="block mx-auto text-slate-400 hover:text-slate-600 font-bold text-xs uppercase tracking-wider pt-2">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Tentar Novamente
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="w-full max-w-2xl mx-auto px-4 pb-6 text-center text-xs text-slate-400 font-medium">
+        Desenvolvido com carinho para praticar inglês de um jeito divertido!
+    </footer>
+
+    <!-- Dados do Quiz & Lógica de Controle -->
+    <script>
+        // Banco de Dados de Questões conforme fornecido pelo usuário
+        const questionsDatabase = [
+            {
+                id: 1,
+                passage: "Towns in the Old West could be big or small, but they used to be very similar to one another. ... Saloon: the center of social life in the West. It was the place to get food, drinks and music. Some saloons were also hotels and even had barbers!",
+                question: "According to the excerpt, what could be found inside some saloons besides food and drinks?",
+                options: {
+                    a: "A post office.",
+                    b: "A general store.",
+                    c: "A sheriff's office.",
+                    d: "Hotels and barbers.",
+                    e: "A bank."
+                },
+                answer: "d",
+                round: 1,
+                explanation: "O texto diz explicitamente que alguns saloons 'também eram hotéis e até tinham barbeiros' (Some saloons were also hotels and even had barbers)."
+            },
+            {
+                id: 2,
+                passage: "",
+                question: "Choose the alternative that correctly transforms the sentence into the negative form of the simple past: \"The sailors slept well all night.\"",
+                options: {
+                    a: "The sailors didn't slept well all night.",
+                    b: "The sailors don't sleep well all night.",
+                    c: "The sailors didn't sleep well all night.",
+                    d: "The sailors wasn't sleep well all night.",
+                    e: "The sailors not slept well all night."
+                },
+                answer: "c",
+                round: 1,
+                explanation: "Para formar a negativa no Simple Past, usamos 'didn't' seguido do verbo no infinitivo sem o 'to' (sleep). A opção 'a' erra porque mantém o verbo no passado (slept)."
+            },
+            {
+                id: 3,
+                passage: "The Old West was a fascinating time, capturing the imagination of people for generations. In fact, since the 19th century, people from the East Coast wanted to know more about the West.",
+                question: "Based on the excerpt, who was interested in learning about the West since the 19th century?",
+                options: {
+                    a: "Outlaws and bandits.",
+                    b: "Buffalo Bill.",
+                    c: "People from the East Coast.",
+                    d: "Movie directors.",
+                    e: "People from Europe."
+                },
+                answer: "c",
+                round: 1,
+                explanation: "O texto afirma diretamente que 'as pessoas da Costa Leste queriam saber mais sobre o Oeste' (people from the East Coast wanted to know more about the West)."
+            },
+            {
+                id: 4,
+                passage: "",
+                question: "Identify the alternative where all the verbs are in the correct simple past irregular form.",
+                options: {
+                    a: "buyed, saw, runned, ate, sended",
+                    b: "bought, saw, ran, ate, sent",
+                    c: "bought, seed, ran, eated, sended",
+                    d: "bought, saw, run, ate, sented",
+                    e: "buy, see, run, eat, send"
+                },
+                answer: "b",
+                round: 1,
+                explanation: "Todos os verbos dessa lista são irregulares. O passado de buy é bought, de see é saw, de run é ran, de eat é ate, e de send é sent."
+            },
+            {
+                id: 5,
+                passage: "The worst sin a pirate could commit was to steal. According to the code, theft was forbidden and punishable by marooning or death.",
+                question: "Based on the excerpt, what was considered the worst sin for a pirate?",
+                options: {
+                    a: "To drink on the deck.",
+                    b: "To run away from a battle.",
+                    c: "To fight another crew member.",
+                    d: "To steal.",
+                    e: "To sleep during the day."
+                },
+                answer: "d",
+                round: 2,
+                explanation: "A primeira frase já nos dá a resposta: 'O pior pecado que um pirata poderia cometer era roubar' (The worst sin a pirate could commit was to steal)."
+            },
+            {
+                id: 6,
+                passage: "",
+                question: "Read the short dialogue and choose the correct option to fill in the blank.\n\"Did the mariners describe obstacles as monsters?\"\n\"No, ____________.\"",
+                options: {
+                    a: "they don't",
+                    b: "they didn't",
+                    c: "they did",
+                    d: "they wasn't",
+                    e: "they aren't"
+                },
+                answer: "b",
+                round: 2,
+                explanation: "Para perguntas feitas com 'Did', a resposta curta negativa usa 'didn't'. Como o sujeito é plural (mariners), usamos 'No, they didn't'."
+            },
+            {
+                id: 7,
+                passage: "The most famous of all ghost ships was the Flying Dutchman. According to the legend, her crew was cursed because of a terrible crime and doomed to sail forever, never stopping at any port, until the end of the days.",
+                question: "According to the excerpt, why was the Flying Dutchman doomed to sail forever?",
+                options: {
+                    a: "Because they were lost in a storm.",
+                    b: "Because of an optic illusion.",
+                    c: "Because the ship sank.",
+                    d: "Because the captain was a ghost.",
+                    e: "Because of a terrible crime."
+                },
+                answer: "e",
+                round: 2,
+                explanation: "A lenda diz que a tripulação foi amaldiçoada 'por causa de um crime terrível' (because of a terrible crime) e condenada a navegar para sempre."
+            },
+            {
+                id: 8,
+                passage: "",
+                question: "Choose the correct option to fill in the gap. Yesterday, the train ____________ at the station very late. (to arrive)",
+                options: {
+                    a: "arrive",
+                    b: "arriving",
+                    c: "arrived",
+                    d: "arrives",
+                    e: "was arrive"
+                },
+                answer: "c",
+                round: 2,
+                explanation: "'Arrive' é um verbo regular. Para colocá-lo no passado simples com a pista temporal 'Yesterday' (ontem), apenas adicionamos 'd' no final: 'arrived'."
+            },
+            {
+                id: 9,
+                passage: "In 1866, Maybelle married a horse thief named Jim Reed, and the couple fled to California together. Jim died in 1874.",
+                question: "According to the excerpt, where did Belle Starr and Jim Reed go after getting married?",
+                options: {
+                    a: "Missouri.",
+                    b: "Scyene.",
+                    c: "Oklahoma.",
+                    d: "California.",
+                    e: "Texas."
+                },
+                answer: "d",
+                round: 1,
+                explanation: "O trecho diz que após casarem, o casal fugiu para a Califórnia (the couple fled to California together)."
+            },
+            {
+                id: 10,
+                passage: "",
+                question: "Choose the correct option to fill in the gap. The captain ____________ the treasure chest on the island last year. (not/to find)",
+                options: {
+                    a: "don't find",
+                    b: "didn't found",
+                    c: "didn't find",
+                    d: "doesn't find",
+                    e: "not found"
+                },
+                answer: "c",
+                round: 2,
+                explanation: "Na forma negativa do passado simples, usamos 'didn't' e o verbo volta ao seu estado normal (find). Portanto, o correto é 'didn't find'."
+            },
+            {
+                id: 11,
+                passage: "There were the Wild West shows of Buffalo Bill and many books about the adventures of famous outlaws: legend tells that Jesse James once read a novel about himself and said “I didn’t do any of this!”",
+                question: "According to the excerpt, what was Jesse James's reaction after reading a novel about himself?",
+                options: {
+                    a: "He loved the story.",
+                    b: "He stated he didn't do any of the things in the book.",
+                    c: "He wanted to meet Buffalo Bill.",
+                    d: "He wrote a letter to the author.",
+                    e: "He decided to make a movie."
+                },
+                answer: "b",
+                round: 1,
+                explanation: "Ele exclamou 'I didn't do any of this' (Eu não fiz nada disso), o que significa que ele afirmou não ter feito nenhuma daquelas coisas."
+            },
+            {
+                id: 12,
+                passage: "",
+                question: "Complete the following sentence with the correct form of the verbs in the simple past. \"Yesterday, Mary ____________ (to go) to the general store and ____________ (to buy) some apples.\"",
+                options: {
+                    a: "goes - buys",
+                    b: "went - bought",
+                    c: "went - buyed",
+                    d: "goed - bought",
+                    e: "going - buying"
+                },
+                answer: "b",
+                round: 1,
+                explanation: "Tanto 'go' quanto 'buy' são verbos irregulares muito comuns. No passado, eles se tornam 'went' (foi) e 'bought' (comprou)."
+            },
+            {
+                id: 13,
+                passage: "At eight in the evening, all the lights and candles were put out and the crew could rest. If anyone was in the mood for drinking, they could do so upon the open deck without lights.",
+                question: "Based on the excerpt, what happened at eight in the evening on a pirate ship?",
+                options: {
+                    a: "The crew started to fight.",
+                    b: "They dropped the anchor.",
+                    c: "They attacked other ships.",
+                    d: "All lights and candles were put out.",
+                    e: "They cleaned their swords."
+                },
+                answer: "d",
+                round: 2,
+                explanation: "O texto diz que às 8 da noite 'todas as luzes e velas eram apagadas' (all the lights and candles were put out)."
+            },
+            {
+                id: 14,
+                passage: "",
+                question: "How would you change the sentence \"The crew explored the underwater cave\" to the interrogative form?",
+                options: {
+                    a: "Did the crew explored the underwater cave?",
+                    b: "Do the crew explore the underwater cave?",
+                    c: "Did the crew explore the underwater cave?",
+                    d: "Were the crew explore the underwater cave?",
+                    e: "Does the crew explored the underwater cave?"
+                },
+                options: {
+                    a: "Did the crew explored the underwater cave?",
+                    b: "Do the crew explore the underwater cave?",
+                    c: "Did the crew explore the underwater cave?",
+                    d: "Were the crew explore the underwater cave?",
+                    e: "Does the crew explored the underwater cave?"
+                },
+                answer: "c",
+                round: 2,
+                explanation: "Para perguntas no passado, colocamos o auxiliar 'Did' no início da frase, e o verbo principal perde o '-ed', voltando ao infinitivo: 'explore'."
+            },
+            {
+                id: 15,
+                passage: "The ancient Greeks told stories about ship-wrecking creatures like Scylla and Charybdis, while the brave vikings feared giant sea serpents and the mighty Kraken.",
+                question: "According to the excerpt, which sea creature was feared by the Vikings?",
+                options: {
+                    a: "Scylla.",
+                    b: "Charybdis.",
+                    c: "Giant squids.",
+                    d: "Giant sea serpents and the Kraken.",
+                    e: "Ghost ships."
+                },
+                answer: "d",
+                round: 3,
+                explanation: "O texto aponta claramente que os vikings temiam 'serpentes marinhas gigantes e o poderoso Kraken' (giant sea serpents and the mighty Kraken)."
+            },
+            {
+                id: 16,
+                passage: "",
+                question: "Complete the sentence with the correct form of the verb in the simple past: \"My father ____________ the wagon near the barn last night.\" (to wash)",
+                options: {
+                    a: "washing",
+                    b: "washed",
+                    c: "washes",
+                    d: "wash",
+                    e: "was wash"
+                },
+                answer: "b",
+                round: 1,
+                explanation: "'Wash' é um verbo regular. Para formar o passado simples, adicionamos '-ed' no final do verbo: 'washed'."
+            },
+            {
+                id: 17,
+                passage: "His mother prepared eggs for breakfast. She and Shaun took them from the coop. He ate them all!",
+                question: "According to the excerpt, where did Shaun and his mother take the eggs from?",
+                options: {
+                    a: "From the general store.",
+                    b: "From the barn.",
+                    c: "From the coop.",
+                    d: "From the saloon.",
+                    e: "From the kitchen."
+                },
+                answer: "c",
+                round: 3,
+                explanation: "A passagem diz diretamente: 'Ela e Shaun pegaram eles do galinheiro' (took them from the coop)."
+            },
+            {
+                id: 18,
+                passage: "",
+                question: "Complete the sentence using the simple past verb in negative form. \"We ____________ to the movies together because I was sick.\" (to go)",
+                options: {
+                    a: "didn't go",
+                    b: "didn't went",
+                    c: "don't go",
+                    d: "doesn't go",
+                    e: "not went"
+                },
+                answer: "a",
+                round: 3,
+                explanation: "Para negativas no Simple Past, usamos 'didn't' e o verbo de ação no infinitivo sem o 'to' (go). Portanto: 'didn't go'."
+            },
+            {
+                id: 19,
+                passage: "Suddenly, he heard a voice below call “Hello!” When he looked down, Jack saw an old man in dirty clothes standing below.",
+                question: "Based on the excerpt, how did the old man get Jack's attention?",
+                options: {
+                    a: "By throwing a stone.",
+                    b: "By calling \"Hello!\".",
+                    c: "By knocking on the door.",
+                    d: "By climbing the ladder.",
+                    e: "By asking for money."
+                },
+                answer: "b",
+                round: 3,
+                explanation: "Ele chamou a atenção gritando 'Hello!' de baixo (heard a voice below call 'Hello!')."
+            },
+            {
+                id: 20,
+                passage: "",
+                question: "Complete the sentence with the correct form of the verbs in the simple past. \"The children ____________ to the park and ____________ water.\" (to run / to drink)",
+                options: {
+                    a: "ran / drank",
+                    b: "runned / drinked",
+                    c: "ran / drinked",
+                    d: "run / drink",
+                    e: "runned / drank"
+                },
+                answer: "a",
+                round: 3,
+                explanation: "Tanto 'run' quanto 'drink' são verbos irregulares no passado: 'run' vira 'ran' e 'drink' vira 'drank'."
+            },
+            {
+                id: 21,
+                passage: "Anchor: a heavy piece of metal used to maintain a ship stopped at the same place.",
+                question: "Based on the excerpt, what is the main function of an anchor?",
+                options: {
+                    a: "To board other ships.",
+                    b: "To steer the ship.",
+                    c: "To maintain a ship stopped at the same place.",
+                    d: "To catch the wind.",
+                    e: "To protect the captain."
+                },
+                answer: "c",
+                round: 2,
+                explanation: "A âncora serve para manter o navio parado no mesmo lugar (used to maintain a ship stopped at the same place)."
+            },
+            {
+                id: 22,
+                passage: "",
+                question: "Choose the correct short answer for the following question: \"Did the pirates attack the Spanish ship?\" (Affirmative)",
+                options: {
+                    a: "Yes, they do.",
+                    b: "Yes, they did.",
+                    c: "Yes, they attack.",
+                    d: "No, they didn't.",
+                    e: "Yes, they were."
+                },
+                answer: "b",
+                round: 2,
+                explanation: "Para perguntas iniciadas com o auxiliar 'Did', a resposta curta afirmativa usa o mesmo auxiliar: 'Yes, they did'."
+            },
+            {
+                id: 23,
+                passage: "Some of these tales originated from optic illusions, called mirages, very common on the high sea, that made sailors believe they could see ships that were not real.",
+                question: "Based on the excerpt, what scientific phenomenon explains some of the ghost ship sightings?",
+                options: {
+                    a: "Bad weather.",
+                    b: "Giant waves.",
+                    c: "Optic illusions called mirages.",
+                    d: "Fog and storms.",
+                    e: "Eclipses."
+                },
+                answer: "c",
+                round: 2,
+                explanation: "O texto indica que esses avistamentos vinham de ilusões de ótica chamadas miragens (optic illusions, called mirages)."
+            },
+            {
+                id: 24,
+                passage: "",
+                question: "Choose the correct option to fill in the gap. Yesterday, the students ____________ to finish their homework early. (to decide)",
+                options: {
+                    a: "decide",
+                    b: "decides",
+                    c: "deciding",
+                    d: "decided",
+                    e: "did decide"
+                },
+                answer: "d",
+                round: 3,
+                explanation: "'Decide' é um verbo regular. Como ele já termina com a letra 'e', adicionamos apenas a letra 'd' no final para formar o passado simples: 'decided'."
+            },
+            {
+                id: 25,
+                passage: "Post offices: mail was a serious business in the West, because it was the main source of communication. Post offices also had telegraphs, which was a precursor of the telephone.",
+                question: "According to the excerpt, what technology present in post offices was a precursor of the telephone?",
+                options: {
+                    a: "The mail.",
+                    b: "The telegraph.",
+                    c: "The stagecoach.",
+                    d: "The railroad.",
+                    e: "The bank safe."
+                },
+                answer: "b",
+                round: 1,
+                explanation: "A passagem diz que as agências de correio tinham telégrafos, que foram os precursores do telefone (telegraphs, which was a precursor of the telephone)."
+            },
+            {
+                id: 26,
+                passage: "",
+                question: "Choose the correct negative form for the following sentence: \"I lost my keys inside my house.\"",
+                options: {
+                    a: "I didn't lost my keys inside my house.",
+                    b: "I didn't lose my keys inside my house.",
+                    c: "I don't lose my keys inside my house.",
+                    d: "I not lost my keys inside my house.",
+                    e: "I wasn't lose my keys inside my house."
+                },
+                answer: "b",
+                round: 3,
+                explanation: "O verbo irregular 'lost' volta ao infinitivo 'lose' quando usamos o auxiliar negativo 'didn't'. Logo, a resposta é 'didn't lose'."
+            },
+            {
+                id: 27,
+                passage: "The old man followed him all the way to the top. When they were both sitting on the roof, Jack turned to the beggar. “No”, he said.",
+                question: "Based on the excerpt, where did Jack finally say \"No\" to the beggar?",
+                options: {
+                    a: "In the garden.",
+                    b: "On the street.",
+                    c: "Inside the house.",
+                    d: "On the roof.",
+                    e: "Near the ladder."
+                },
+                answer: "d",
+                round: 3,
+                explanation: "Eles estavam sentados no telhado (sitting on the roof) quando Jack virou-se para ele e disse 'Não'."
+            },
+            {
+                id: 28,
+                passage: "",
+                question: "Choose the correct sentence in the simple past with an irregular verb.",
+                options: {
+                    a: "She work in the saloon yesterday.",
+                    b: "He played the guitar all night.",
+                    c: "We ate roasted meat for dinner last night.",
+                    d: "They travel to the frontier.",
+                    e: "I wanted a new horse."
+                },
+                answer: "c",
+                round: 3,
+                explanation: "O verbo 'eat' (comer) tem a forma passada irregular 'ate'. Os verbos das outras frases corretas são regulares (played, wanted) ou estão incorretos gramaticalmente."
+            },
+            {
+                id: 29,
+                passage: "Edward Thatch, known as “Blackbeard”, is the most famous pirate and was the most feared one during his time. He equipped theatrics to instill fear in his enemies. He used to put fuses in his beard and light them up to have smoke coming out, giving him a demonic look.",
+                question: "According to the excerpt, why did Blackbeard light fuses in his beard?",
+                options: {
+                    a: "Because it was cold at sea.",
+                    b: "To have smoke coming out, giving him a demonic look.",
+                    c: "To see better in the dark.",
+                    d: "To cook his food.",
+                    e: "Because it was a pirate tradition."
+                },
+                answer: "b",
+                round: 2,
+                explanation: "Ele acendia pavios na barba para soltar fumaça, dando a ele um aspecto demoníaco que assustava os inimigos (to have smoke coming out, giving him a demonic look)."
+            },
+            {
+                id: 30,
+                passage: "",
+                question: "Choose the correct option to fill in the gap. \"____________ did the captain's parrot speak?\" \"It spoke Spanish.\"",
+                options: {
+                    a: "Where",
+                    b: "Who",
+                    c: "Why",
+                    d: "When",
+                    e: "What"
+                },
+                answer: "e",
+                round: 2,
+                explanation: "Como a resposta indica uma língua ('Espanhol'), a pergunta de informação correta deve começar com o pronome 'What' (O que / Qual idioma)."
+            },
+            {
+                id: 31,
+                passage: "It is very rare to see a giant squid alive in its habitat, but you can watch here a footage of one made in Toyama Bay, Japan, in 2015.",
+                question: "Based on the excerpt, where was the footage of the giant squid captured?",
+                options: {
+                    a: "In the Caribbean Sea.",
+                    b: "In Toyama Bay, Japan.",
+                    c: "In the Atlantic Ocean.",
+                    d: "Near the coast of Europe.",
+                    e: "In the Indian Ocean."
+                },
+                answer: "b",
+                round: 3,
+                explanation: "O texto menciona que a filmagem foi feita em Toyama Bay, no Japão (Toyama Bay, Japan, in 2015)."
+            },
+            {
+                id: 32,
+                passage: "",
+                question: "Choose the correct options to fill in the gaps. \"The cowboys ____________ the supplies and ____________ near the river.\"(to carry / to stop)",
+                options: {
+                    a: "carried / stoped",
+                    b: "carryed / stopped",
+                    c: "carried / stopped",
+                    d: "carries / stops",
+                    e: "carrying / stopping"
+                },
+                answer: "c",
+                round: 1,
+                explanation: "Para 'carry', trocamos o 'y' por 'ied' (carried). Para 'stop', que é uma palavra consoante-vogal-consoante (CVC) de uma sílaba, dobramos a última consoante antes do 'ed' (stopped)."
+            },
+            {
+                id: 33,
+                passage: "Born in 1848 to a prosperous family in Missouri, Myra Maybelle Shirley (Belle) should have become a proper young lady, married a rich man, and never done anything interesting in her life. But Maybelle preferred being outdoors learning how to shoot a gun with her older brother, Bud, to staying inside the all-girls school she attended.",
+                question: "According to the excerpt, what was expected of Belle Starr because of her background?",
+                options: {
+                    a: "To become an outlaw and rob banks.",
+                    b: "To become a proper young lady and marry a rich man.",
+                    c: "To learn how to shoot a gun.",
+                    d: "To buy a horse and travel to California.",
+                    e: "To become a teacher."
+                },
+                answer: "b",
+                round: 1,
+                explanation: "Por causa da sua família próspera, era esperado que ela se tornasse uma moça direita e casasse com um homem rico (should have become a proper young lady, married a rich man)."
+            },
+            {
+                id: 34,
+                passage: "",
+                question: "Complete the sentence with the simple past of the verb in negative form: \"The captain ____________ with the new route to the island.\" (to agree)",
+                options: {
+                    a: "didn't agree",
+                    b: "don't agree",
+                    c: "didn't agreed",
+                    d: "doesn't agree",
+                    e: "was agree"
+                },
+                answer: "a",
+                round: 2,
+                explanation: "Usamos 'didn't' para negativas do passado, e o verbo principal mantém a forma infinitiva 'agree'."
+            },
+            {
+                id: 35,
+                passage: "“What do you want?” he asked, when he reached the ground. “Could you spare a little money for an old beggar?” asked the old man.",
+                question: "According to the excerpt, what did the old man ask Jack for when Jack reached the ground?",
+                options: {
+                    a: "Some food.",
+                    b: "A glass of water.",
+                    c: "A little money.",
+                    d: "Help to fix the roof.",
+                    e: "A place to sleep."
+                },
+                answer: "c",
+                round: 3,
+                explanation: "O velhinho pediu um pouco de dinheiro para um pobre mendigo (spare a little money for an old beggar)."
+            },
+            {
+                id: 36,
+                passage: "",
+                question: "Choose the alternative that correctly transforms the sentence into the simple past: \"They buy new boots for the rodeo.\"",
+                options: {
+                    a: "They buyed new boots for the rodeo.",
+                    b: "They boughts new boots for the rodeo.",
+                    c: "They bought new boots for the rodeo.",
+                    d: "They buying new boots for the rodeo.",
+                    e: "They was buy new boots for the rodeo."
+                },
+                answer: "c",
+                round: 1,
+                explanation: "O passado do verbo irregular 'buy' (comprar) é 'bought'. Portanto, a frase correta é 'They bought new boots...'"
+            },
+            {
+                id: 37,
+                passage: "Believe it or not, excellent discipline was expected from the pirates. Fights among the crew were strongly discouraged. Some captains punished those who disrupted the peace on the ship with a fight, and it could be forty lashes.",
+                question: "According to the excerpt, how many lashes could a pirate receive for fighting on the ship?",
+                options: {
+                    a: "Ten lashes.",
+                    b: "Twenty lashes.",
+                    c: "Thirty lashes.",
+                    d: "Forty lashes.",
+                    e: "Fifty lashes."
+                },
+                answer: "d",
+                round: 2,
+                explanation: "O texto indica que a punição física para quem brigasse a bordo podia chegar a quarenta chibatadas (it could be forty lashes)."
+            },
+            {
+                id: 38,
+                passage: "",
+                question: "Choose the correct option to fill in the gap. \"____________ did the captain bury the treasure?\" \"On the desert island.\"",
+                options: {
+                    a: "What",
+                    b: "Who",
+                    c: "When",
+                    d: "Where",
+                    e: "Why"
+                },
+                answer: "d",
+                round: 2,
+                explanation: "Como a resposta refere-se a um local físico ('Na ilha deserta'), a palavra interrogativa correta é 'Where' (Onde)."
+            },
+            {
+                id: 39,
+                passage: "Despite the legends, giant squids are real and live in the deepest regions of the seas. According to scientists, giant squids can reach a maximum size of 13 meters and their only predators are whales.",
+                question: "According to the excerpt, what is the only predator of the giant squid?",
+                options: {
+                    a: "Sharks.",
+                    b: "Whales.",
+                    c: "Giant sea serpents.",
+                    d: "Humans.",
+                    e: "Dolphins."
+                },
+                answer: "b",
+                round: 3,
+                explanation: "O texto declara que os únicos predadores naturais das lulas gigantes são as baleias (their only predators are whales)."
+            },
+            {
+                id: 40,
+                passage: "",
+                question: "Choose the alternative that correctly transforms the sentence into the simple past: \"They study English every day.\"",
+                options: {
+                    a: "They studies English every day.",
+                    b: "They studied English every day.",
+                    c: "They studyed English every day.",
+                    d: "They studying English every day.",
+                    e: "They did study English every day."
+                },
+                answer: "b",
+                round: 3,
+                explanation: "Para verbos que terminam em consoante + 'y' como 'study', removemos o 'y' e acrescentamos 'ied': 'studied'."
+            }
+        ];
+
+        // Estado do Aplicativo
+        let playerName = "";
+        let playerAvatar = "🤠";
+        let avatarName = "Cowboy";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answersLog = []; // Armazena objeto de acertos/erros para relatório final
+
+        // Seleção de Avatar
+        function selectAvatar(emoji, name) {
+            playerAvatar = emoji;
+            avatarName = name;
+            
+            // Highlight na borda do botão selecionado
+            document.querySelectorAll('.avatar-btn').forEach(btn => {
+                btn.classList.remove('border-brand-500', 'bg-brand-50/50');
+                if(btn.innerText === emoji) {
+                    btn.classList.add('border-brand-500', 'bg-brand-50/50');
+                }
+            });
+        }
+
+        // Inicia o Quiz
+        function startQuiz() {
+            const inputName = document.getElementById('player-name').value.trim();
+            if(!inputName) {
+                alert("Por favor, digite o seu nome para começar o desafio! 😉");
+                return;
+            }
+            playerName = inputName;
+            
+            // Configura o cabeçalho com o nome do jogador
+            document.getElementById('player-avatar-icon').innerText = playerAvatar;
+            document.getElementById('player-name-display').innerText = playerName;
+            document.getElementById('header-badge').classList.remove('hidden');
+
+            // Troca de tela
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            // Inicia primeira pergunta
+            currentQuestionIndex = 0;
+            score = 0;
+            answersLog = [];
+            loadQuestion();
+        }
+
+        // Carrega a questão atual na tela
+        function loadQuestion() {
+            const currentQuestion = questionsDatabase[currentQuestionIndex];
+            
+            // Atualiza indicadores e barra de progresso
+            document.getElementById('quiz-progress-text').innerText = `QUESTÃO ${currentQuestionIndex + 1} DE ${questionsDatabase.length}`;
+            const progressPercentage = ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPercentage}%`;
+
+            // Altera tag da rodada temática
+            const roundTag = document.getElementById('quiz-round-tag');
+            if (currentQuestion.round === 1) {
+                roundTag.innerText = "🤠 Rodada 1: Velho Oeste";
+                roundTag.className = "bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-[10px] uppercase font-bold";
+            } else if (currentQuestion.round === 2) {
+                roundTag.innerText = "🏴‍☠️ Rodada 2: Mar dos Piratas";
+                roundTag.className = "bg-slate-800 text-slate-100 px-3 py-1 rounded-full text-[10px] uppercase font-bold";
+            } else {
+                roundTag.innerText = "🦑 Rodada 3: Mistérios Profundos";
+                roundTag.className = "bg-sky-100 text-sky-800 px-3 py-1 rounded-full text-[10px] uppercase font-bold";
+            }
+
+            // Exibe ou oculta a passagem de apoio
+            const passageContainer = document.getElementById('passage-container');
+            if(currentQuestion.passage) {
+                document.getElementById('passage-text').innerText = currentQuestion.passage;
+                passageContainer.classList.remove('hidden');
+            } else {
+                passageContainer.classList.add('hidden');
+            }
+
+            // Define texto da pergunta
+            document.getElementById('question-text').innerText = currentQuestion.question;
+
+            // Gera botões de alternativas
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+            
+            // Oculta caixa de explicação até que o aluno responda
+            document.getElementById('explanation-container').classList.add('hidden');
+
+            Object.keys(currentQuestion.options).forEach(key => {
+                const optText = currentQuestion.options[key];
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.className = "option-btn w-full text-left px-5 py-4 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200/80 rounded-2xl transition-all duration-150 flex items-start gap-3 focus:outline-none";
+                btn.onclick = () => selectOption(key);
+                btn.innerHTML = `
+                    <span class="option-badge flex-shrink-0 w-7 h-7 bg-white border border-slate-300 rounded-full flex items-center justify-center font-bold text-xs text-slate-500 uppercase">${key}</span>
+                    <span class="text-sm md:text-base font-semibold text-slate-700 leading-tight">${optText}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Processa resposta escolhida
+        function selectOption(selectedKey) {
+            const currentQuestion = questionsDatabase[currentQuestionIndex];
+            const isCorrect = (selectedKey === currentQuestion.answer);
+
+            // Armazena no Log
+            answersLog.push({
+                questionId: currentQuestion.id,
+                correct: isCorrect,
+                questionNum: currentQuestionIndex + 1,
+                userAnswer: selectedKey,
+                correctAnswer: currentQuestion.answer
+            });
+
+            if (isCorrect) score++;
+
+            // Desabilita cliques adicionais nos botões
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.onclick = null; // desativa evento de clique
+                btn.classList.remove('hover:bg-slate-100');
+            });
+
+            // Altera visual dos botões de alternativas na tela
+            const optionButtons = document.querySelectorAll('.option-btn');
+            optionButtons.forEach(btn => {
+                const key = btn.querySelector('.option-badge').innerText.toLowerCase();
+                if(key === currentQuestion.answer) {
+                    // Certa
+                    btn.className = "option-btn w-full text-left px-5 py-4 bg-emerald-50 border-2 border-emerald-500 rounded-2xl flex items-start gap-3 focus:outline-none";
+                    btn.querySelector('.option-badge').className = "option-badge flex-shrink-0 w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold text-xs uppercase";
+                    btn.querySelector('.option-badge').innerHTML = '<i class="fa-solid fa-check text-xs"></i>';
+                } else if(key === selectedKey && !isCorrect) {
+                    // Errada selecionada pelo usuário
+                    btn.className = "option-btn w-full text-left px-5 py-4 bg-rose-50 border-2 border-rose-400 rounded-2xl flex items-start gap-3 focus:outline-none";
+                    btn.querySelector('.option-badge').className = "option-badge flex-shrink-0 w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold text-xs uppercase";
+                    btn.querySelector('.option-badge').innerHTML = '<i class="fa-solid fa-xmark text-xs"></i>';
+                }
+            });
+
+            // Apresenta Card de Explicação
+            const expContainer = document.getElementById('explanation-container');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const expText = document.getElementById('explanation-text');
+
+            if(isCorrect) {
+                feedbackIcon.className = "w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-emerald-500";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-face-smile"></i>';
+                feedbackTitle.innerText = "Mandou bem! 🎉";
+                feedbackTitle.className = "font-display text-lg text-emerald-600 font-bold";
+            } else {
+                feedbackIcon.className = "w-8 h-8 rounded-full flex items-center justify-center text-white font-bold bg-rose-500";
+                feedbackIcon.innerHTML = '<i class="fa-solid fa-face-rolling-eyes"></i>';
+                feedbackTitle.innerText = `Ops, era a letra ${currentQuestion.answer.toUpperCase()}! 😉`;
+                feedbackTitle.className = "font-display text-lg text-rose-500 font-bold";
+            }
+
+            expText.innerText = currentQuestion.explanation;
+            expContainer.classList.remove('hidden');
+            
+            // Scroll suave automático até a explicação
+            expContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Avança na navegação do Quiz
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if(currentQuestionIndex < questionsDatabase.length) {
+                loadQuestion();
+            } else {
+                showResultsScreen();
+            }
+        }
+
+        // Mostra os Resultados Finais
+        function showResultsScreen() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            const totalQuestions = questionsDatabase.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
+
+            // Atualiza campos de texto
+            document.getElementById('result-percentage').innerText = `${percentage}%`;
+            document.getElementById('result-score-text').innerText = `${score} DE ${totalQuestions} ACERTOS`;
+            document.getElementById('result-correct-count').innerText = score;
+            document.getElementById('result-wrong-count').innerText = totalQuestions - score;
+
+            // Animação do círculo de progresso circular SVG
+            const circle = document.getElementById('result-svg-progress');
+            const radius = circle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Determina Medalha e Mensagem Especial
+            const badgeTitle = document.getElementById('result-badge-title');
+            const motivationalText = document.getElementById('result-motivational-text');
+
+            if(percentage >= 90) {
+                badgeTitle.innerText = `Lenda dos Sete Mares 👑`;
+                motivationalText.innerText = "Incrível! Você dominou completamente todo o vocabulário e a gramática do desafio!";
+                circle.setAttribute('stroke', '#10b981'); // Verde
+            } else if(percentage >= 70) {
+                badgeTitle.innerText = `Xerife do Inglês 🤠`;
+                motivationalText.innerText = "Muito bom! Seus conhecimentos estão super afiados e você venceu a maioria dos desafios!";
+                circle.setAttribute('stroke', '#d97706'); // Laranja/Dourado
+            } else if(percentage >= 50) {
+                badgeTitle.innerText = `Explorador Iniciante 🎒`;
+                motivationalText.innerText = "Você está no caminho certo! Com um pouco mais de treino, vai virar um verdadeiro mestre!";
+                circle.setAttribute('stroke', '#3b82f6'); // Azul
+            } else {
+                badgeTitle.innerText = `Recruta Corajoso ⛵`;
+                motivationalText.innerText = "Aventura é assim mesmo! O importante é aprender com os erros e tentar novamente!";
+                circle.setAttribute('stroke', '#ef4444'); // Vermelho
+            }
+        }
+
+        // Gera e compartilha relatório formatado para o WhatsApp
+        function shareResults() {
+            const totalQ = questionsDatabase.length;
+            const wrongCount = totalQ - score;
+            const percentage = Math.round((score / totalQ) * 100);
+
+            // Mapeia erros para listar no relatório de forma amigável
+            const wrongList = answersLog
+                .filter(item => !item.correct)
+                .map(item => `Questão ${item.questionNum}`)
+                .join(', ');
+
+            // Mensagem formatada e amigável para envio imediato aos pais
+            let msg = `*Relatório de Desempenho - English Quest* 🚀\n\n`;
+            msg += `Olá! Eu completei o desafio de inglês no meu celular! 😊\n\n`;
+            msg += `👤 *Nome:* ${playerName}\n`;
+            msg += `🎭 *Avatar:* ${playerAvatar} (${avatarName})\n`;
+            msg += `🎯 *Resultado Final:* ${score} de ${totalQ} acertos\n`;
+            msg += `📈 *Índice de Acerto:* ${percentage}%\n\n`;
+            
+            if(wrongCount > 0) {
+                msg += `📝 *Preciso revisar:* ${wrongList}\n\n`;
+                msg += `_O próprio aplicativo me ensinou as regras corretas e explicações de cada erro!_ 💡`;
+            } else {
+                msg += `⭐ *GABARITEI!* Acertei absolutamente tudo de primeira! Maravilhoso! 🎉`;
+            }
+
+            // Codifica para usar na URL do Whatsapp
+            const encodedText = encodeURIComponent(msg);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+            
+            // Abre o aplicativo/web do WhatsApp
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Reinicia o quiz
+        function restartQuiz() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+            document.getElementById('header-badge').classList.add('hidden');
+            document.getElementById('player-name').value = "";
+        }
+    </script>
+</body>
+</html>
+```eof
+
+Sua plataforma interativa de testes já está perfeitamente configurada no arquivo acima! 
+
+### O que você pode fazer com o arquivo gerado:
+1. **Salvar e Usar:** Copie todo o código HTML do bloco acima e salve-o em um arquivo chamado `index.html` ou `interactive_quiz.html`.
+2. **Como hospedar de graça:** Você pode colocar esse arquivo de forma totalmente gratuita em serviços rápidos como o [Netlify Drop](https://app.netlify.com/drop) ou no [GitHub Pages](https://pages.github.com/). Basta arrastar o arquivo e um **link curto será gerado na hora**!
+3. **Compartilhe via WhatsApp:** Envie esse link gerado no celular deles. Eles farão o teste no próprio navegador do telefone, com cliques rápidos e divertidos, e depois clicarão no botão do WhatsApp na última tela do app para enviar o relatório completo de acertos e erros direto para você!
